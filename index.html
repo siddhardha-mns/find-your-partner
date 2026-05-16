@@ -1165,11 +1165,17 @@
     </div>
     <div class="match-connector">your match</div>
     ${partners.map(partner => `
-    <div class="p-card">
-      <div class="avatar av-blue">${initials(partner.name)}</div>
-      <div>
-        <div class="p-name">${partner.name}</div>
-        <div class="p-meta">${partner.company} · ${partner.phone}</div>
+    <div class="p-card" style="flex-direction: column; align-items: stretch; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="avatar av-blue">${initials(partner.name)}</div>
+        <div>
+          <div class="p-name" style="font-size: 18px;">${partner.name}</div>
+          <div class="p-meta" style="font-size: 14px;">🏢 ${partner.company}</div>
+        </div>
+      </div>
+      <div style="background: rgba(96,165,250,0.08); border: 1px solid rgba(96,165,250,0.2); border-radius: var(--radius-sm); padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 13px; color: var(--text2);">Contact Partner</span>
+        <a href="tel:${partner.phone}" style="color: var(--blue); font-weight: 600; text-decoration: none; font-size: 16px; background: rgba(96,165,250,0.15); padding: 6px 12px; border-radius: 20px;">📞 ${partner.phone}</a>
       </div>
     </div>`).join('')}
     ${allFound
