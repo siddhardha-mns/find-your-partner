@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Partner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0e0e0f;
+            --surface: #18181b;
+            --surface2: #222226;
+            --border: rgba(255, 255, 255, 0.08);
+            --border2: rgba(255, 255, 255, 0.14);
+            --text: #f0efe8;
+            --text2: #9e9d97;
+            --text3: #5c5b57;
+            --accent: #e8c547;
+            --accent2: #b89e30;
+            --green: #4ade80;
+            --green-bg: rgba(74, 222, 128, 0.1);
+            --red: #f87171;
+            --red-bg: rgba(248, 113, 113, 0.1);
+            --blue: #60a5fa;
+            --blue-bg: rgba(96, 165, 250, 0.08);
+            --radius: 14px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden
+        }
+
+        /* ── SCREENS ── */
+        .screen {
+            display: none;
+            min-height: 100vh;
+            animation: fadeIn 0.25s ease
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        /* ── HERO LANDING ── */
+        #s-landing {
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(232, 197, 71, 0.07) 0%, transparent 70%);
+            pointer-events: none
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 70% 50% at 50% 50%, black, transparent);
+            pointer-events: none
+        }
+
+        .hero-inner {
+            position: relative;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            max-width: 480px;
+            width: 100%
+        }
+
+        .hero-eyebrow {
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 1.5rem
+        }
+
+        .hero-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(42px, 8vw, 72px);
+            line-height: 1.05;
+            color: var(--text);
+            margin-bottom: 0.75rem
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--accent)
+        }
+
+        .hero-sub {
+            font-size: 15px;
+            color: var(--text2);
+            margin-bottom: 3rem;
+            line-height: 1.6
+        }
+
+        .hero-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: stretch
+        }
+
+        .btn-hero-primary {
+            background: var(--accent);
+            color: #0e0e0f;
+            border: none;
+            border-radius: var(--radius);
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+            letter-spacing: 0.01em
+        }
+
+        .btn-hero-primary:hover {
+            background: #f0d060;
+            transform: translateY(-1px)
+        }
+
+        .btn-hero-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius);
+            padding: 13px 28px;
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s
+        }
+
+        .btn-hero-secondary:hover {
+            background: var(--surface);
+            border-color: rgba(255, 255, 255, 0.22)
+        }
+
+        .btn-hero-ghost {
+            background: transparent;
+            color: var(--text3);
+            border: none;
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            padding: 8px;
+            transition: color 0.15s
+        }
+
+        .btn-hero-ghost:hover {
+            color: var(--text2)
+        }
+
+        /* ── SHARED PANEL ── */
+        .panel {
+            max-width: 520px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            flex: 1
+        }
+
+        .panel-header {
+            margin-bottom: 2rem
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--text2);
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            padding: 0;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.15s
+        }
+
+        .back-btn:hover {
+            color: var(--text)
+        }
+
+        .panel-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 28px;
+            color: var(--text);
+            margin-bottom: 4px
+        }
+
+        .panel-sub {
+            font-size: 14px;
+            color: var(--text2)
+        }
+
+        /* ── FORM ── */
+        .field {
+            margin-bottom: 1rem
+        }
+
+        .field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 6px
+        }
+
+        .field input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.15s
+        }
+
+        .field input:focus {
+            border-color: var(--accent)
+        }
+
+        .field input::placeholder {
+            color: var(--text3)
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #0e0e0f;
+            border: none;
+            border-radius: var(--radius);
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.15s
+        }
+
+        .submit-btn:hover {
+            background: #f0d060
+        }
+
+        .submit-btn:disabled {
+            background: var(--surface2);
+            color: var(--text3);
+            cursor: not-allowed
+        }
+
+        /* ── ALERTS ── */
+        .alert {
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            margin-bottom: 1rem;
+            line-height: 1.5
+        }
+
+        .alert-warn {
+            background: rgba(232, 197, 71, 0.1);
+            border: 1px solid rgba(232, 197, 71, 0.25);
+            color: #e8c547
+        }
+
+        .alert-success {
+            background: var(--green-bg);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            color: var(--green)
+        }
+
+        .alert-info {
+            background: var(--blue-bg);
+            border: 1px solid rgba(96, 165, 250, 0.15);
+            color: var(--blue)
+        }
+
+        .alert-error {
+            background: var(--red-bg);
+            border: 1px solid rgba(248, 113, 113, 0.2);
+            color: var(--red)
+        }
+
+        /* ── LOOKUP ── */
+        .search-wrap {
+            position: relative;
+            margin-bottom: 1.5rem
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text3);
+            font-size: 16px;
+            pointer-events: none
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px 12px 40px;
+            font-size: 15px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.15s
+        }
+
+        .search-input:focus {
+            border-color: var(--accent)
+        }
+
+        .search-input::placeholder {
+            color: var(--text3)
+        }
+
+        .suggestion-list {
+            list-style: none;
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius-sm);
+            margin-top: 4px;
+            overflow: hidden;
+            max-height: 200px;
+            overflow-y: auto
+        }
+
+        .suggestion-item {
+            padding: 10px 14px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.1s
+        }
+
+        .suggestion-item:hover {
+            background: var(--surface2)
+        }
+
+        /* ── PROFILE CARD ── */
+        .profile-result {
+            margin-top: 1rem
+        }
+
+        .waiting-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center
+        }
+
+        .match-reveal {
+            background: var(--surface);
+            border: 1px dashed rgba(232, 197, 71, 0.3);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            animation: fadeIn 0.3s ease
+        }
+
+        .match-label {
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text3);
+            margin-bottom: 0.5rem
+        }
+
+        .match-connector {
+            text-align: center;
+            padding: 1rem 0;
+            color: var(--text3);
+            font-size: 13px;
+            position: relative
+        }
+
+        .match-connector::before,
+        .match-connector::after {
+            content: '';
+            display: block;
+            height: 1px;
+            background: var(--border2);
+            margin: 8px 0
+        }
+
+        .p-card {
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0
+        }
+
+        .av-accent {
+            background: rgba(232, 197, 71, 0.15);
+            color: var(--accent)
+        }
+
+        .av-blue {
+            background: rgba(96, 165, 250, 0.12);
+            color: var(--blue)
+        }
+
+        .p-name {
+            font-weight: 500;
+            font-size: 15px;
+            color: var(--text)
+        }
+
+        .p-meta {
+            font-size: 12px;
+            color: var(--text2);
+            margin-top: 2px
+        }
+
+        .found-btn {
+            width: 100%;
+            background: var(--green);
+            color: #0e0e0f;
+            border: none;
+            border-radius: var(--radius);
+            padding: 13px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.15s
+        }
+
+        .found-btn:hover {
+            background: #22c55e
+        }
+
+        .found-btn:disabled {
+            background: var(--surface2);
+            color: var(--text3);
+            cursor: not-allowed
+        }
+
+        .confirmed-banner {
+            background: var(--green-bg);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 1rem
+        }
+
+        .confirmed-big {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px;
+            color: var(--green);
+            margin: 8px 0 4px
+        }
+
+        /* ── ADMIN ── */
+        #s-admin {
+            align-items: stretch
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh
+        }
+
+        .admin-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column
+        }
+
+        .admin-logo {
+            font-family: 'DM Serif Display', serif;
+            font-size: 18px;
+            color: var(--text);
+            margin-bottom: 2rem;
+            padding: 0 0.5rem
+        }
+
+        .admin-logo span {
+            color: var(--accent)
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1
+        }
+
+        .sn-item {
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text2);
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: 'DM Sans', sans-serif;
+            text-align: left;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .sn-item:hover {
+            background: var(--surface2);
+            color: var(--text)
+        }
+
+        .sn-item.active {
+            background: rgba(232, 197, 71, 0.1);
+            color: var(--accent)
+        }
+
+        .admin-exit {
+            padding: 9px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--text3);
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: 'DM Sans', sans-serif;
+            text-align: left;
+            width: 100%;
+            margin-top: auto
+        }
+
+        .admin-exit:hover {
+            color: var(--text2)
+        }
+
+        .admin-main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto
+        }
+
+        .admin-tab {
+            display: none
+        }
+
+        .admin-tab.active {
+            display: block
+        }
+
+        .admin-section-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 24px;
+            margin-bottom: 0.25rem
+        }
+
+        .admin-section-sub {
+            font-size: 13px;
+            color: var(--text2);
+            margin-bottom: 1.75rem
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 2rem
+        }
+
+        .stat-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem
+        }
+
+        .stat-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 32px;
+            color: var(--text);
+            line-height: 1
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text2);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em
+        }
+
+        .admin-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem
+        }
+
+        .admin-toolbar-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text2)
+        }
+
+        .admin-btn-row {
+            display: flex;
+            gap: 8px
+        }
+
+        .abtn {
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.15s;
+            border: 1px solid var(--border2);
+            background: var(--surface2);
+            color: var(--text)
+        }
+
+        .abtn:hover {
+            background: var(--surface);
+            border-color: rgba(255, 255, 255, 0.22)
+        }
+
+        .abtn.primary {
+            background: var(--accent);
+            color: #0e0e0f;
+            border-color: transparent
+        }
+
+        .abtn.primary:hover {
+            background: #f0d060
+        }
+
+        .abtn.danger {
+            background: var(--red-bg);
+            color: var(--red);
+            border-color: rgba(248, 113, 113, 0.2)
+        }
+
+        .abtn.danger:hover {
+            background: rgba(248, 113, 113, 0.2)
+        }
+
+        .p-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px
+        }
+
+        .p-table th {
+            text-align: left;
+            padding: 8px 12px;
+            color: var(--text3);
+            font-weight: 500;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .p-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle
+        }
+
+        .p-table tr:last-child td {
+            border-bottom: none
+        }
+
+        .p-table tbody tr:hover td {
+            background: rgba(255, 255, 255, 0.02)
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500
+        }
+
+        .b-wait {
+            background: rgba(156, 163, 175, 0.1);
+            color: #9ca3af
+        }
+
+        .b-matched {
+            background: var(--blue-bg);
+            color: var(--blue)
+        }
+
+        .b-found {
+            background: var(--green-bg);
+            color: var(--green)
+        }
+
+        .tbl-scroll {
+            max-height: 460px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: var(--radius)
+        }
+
+        .pair-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .pair-row {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between
+        }
+
+        .pair-members {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px
+        }
+
+        .pair-sep {
+            color: var(--text3);
+            font-size: 16px
+        }
+
+        .pair-meta {
+            font-size: 11px;
+            color: var(--text3);
+            margin-top: 2px
+        }
+
+        .progress-bar-wrap {
+            background: var(--surface2);
+            border-radius: 4px;
+            height: 6px;
+            margin-top: 6px;
+            overflow: hidden
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.3s
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text3);
+            font-size: 14px
+        }
+
+        .search-admin {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: var(--radius-sm);
+            padding: 9px 14px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            outline: none;
+            margin-bottom: 12px
+        }
+
+        .search-admin:focus {
+            border-color: var(--accent)
+        }
+
+        .search-admin::placeholder {
+            color: var(--text3)
+        }
+
+        .odd-warn {
+            background: rgba(232, 197, 71, 0.07);
+            border: 1px solid rgba(232, 197, 71, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--accent);
+            margin-bottom: 12px
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LANDING -->
+    <div class="screen active" id="s-landing">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-inner">
+            <p class="hero-eyebrow">Networking Event 2025</p>
+            <h1 class="hero-title">Find Your<br><em>Partner</em></h1>
+            <p class="hero-sub">Register, get matched, and find your networking partner somewhere in the venue.</p>
+            <div class="hero-btns">
+                <button class="btn-hero-primary" onclick="go('s-register')">Register now</button>
+                <button class="btn-hero-secondary" onclick="go('s-lookup')">Find my partner</button>
+                <button class="btn-hero-ghost" onclick="adminPrompt()">Admin panel ›</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="screen" id="s-register">
+        <div class="panel">
+            <div class="panel-header">
+                <button class="back-btn" onclick="go('s-landing')">← Back</button>
+                <h1 class="panel-title">Register</h1>
+                <p class="panel-sub">Enter your details to join the event matching pool.</p>
+            </div>
+            <div id="reg-msg"></div>
+            <div class="field"><label>Full name *</label><input type="text" id="reg-name"
+                    placeholder="e.g. Arjun Sharma" maxlength="80"></div>
+            <div class="field"><label>Company / Organisation *</label><input type="text" id="reg-company"
+                    placeholder="e.g. Infosys" maxlength="80"></div>
+            <div class="field"><label>Phone number *</label><input type="tel" id="reg-phone"
+                    placeholder="e.g. 9876543210" maxlength="15"></div>
+            <button class="submit-btn" onclick="registerParticipant()">Register →</button>
+        </div>
+    </div>
+
+    <!-- LOOKUP -->
+    <div class="screen" id="s-lookup">
+        <div class="panel">
+            <div class="panel-header">
+                <button class="back-btn" onclick="go('s-landing')">← Back</button>
+                <h1 class="panel-title">Find my partner</h1>
+                <p class="panel-sub">Search your name to see who you've been matched with.</p>
+            </div>
+            <div id="lookup-msg"></div>
+            <div class="search-wrap">
+                <span class="search-icon">⌕</span>
+                <input class="search-input" type="text" id="lookup-input" placeholder="Start typing your name..."
+                    oninput="onLookupType()" autocomplete="off">
+            </div>
+            <ul class="suggestion-list" id="suggestion-list" style="display:none"></ul>
+            <div id="profile-result"></div>
+        </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="screen" id="s-admin">
+        <div class="admin-layout">
+            <aside class="admin-sidebar">
+                <div class="admin-logo">FYP <span>Admin</span></div>
+                <nav class="sidebar-nav">
+                    <button class="sn-item active" onclick="adminTab(this,'tab-overview')">📊 Overview</button>
+                    <button class="sn-item" onclick="adminTab(this,'tab-participants')">👥 Participants</button>
+                    <button class="sn-item" onclick="adminTab(this,'tab-pairs')">🔗 Pairs</button>
+                </nav>
+                <button class="admin-exit" onclick="go('s-landing')">← Exit admin</button>
+            </aside>
+            <main class="admin-main">
+
+                <!-- OVERVIEW TAB -->
+                <div class="admin-tab active" id="tab-overview">
+                    <h2 class="admin-section-title">Overview</h2>
+                    <p class="admin-section-sub">Live event status</p>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-num" id="st-total">0</div>
+                            <div class="stat-label">Registered</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-num" id="st-unmatched">0</div>
+                            <div class="stat-label">Unmatched</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-num" id="st-matched">0</div>
+                            <div class="stat-label">Matched</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-num" id="st-found">0</div>
+                            <div class="stat-label">Found</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom:1.25rem">
+                        <div
+                            style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px">
+                            <span>Pairs found</span>
+                            <span id="progress-label">0 / 0</span>
+                        </div>
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div id="overview-msg"></div>
+                    <div id="odd-warn-overview"></div>
+                    <div class="admin-btn-row" style="flex-wrap:wrap;gap:8px">
+                        <button class="abtn primary" onclick="runMatching()">⚡ Run matching</button>
+                        <button class="abtn" onclick="addDemoData()">+ Add 10 demo participants</button>
+                        <button class="abtn danger" id="reset-btn" onclick="resetMatching()" style="display:none">↺
+                            Reset matching</button>
+                    </div>
+                </div>
+
+                <!-- PARTICIPANTS TAB -->
+                <div class="admin-tab" id="tab-participants">
+                    <h2 class="admin-section-title">Participants</h2>
+                    <p class="admin-section-sub" id="ptab-sub">All registered members</p>
+                    <input class="search-admin" type="text" placeholder="Search by name or company..."
+                        oninput="filterParticipants(this.value)" id="ptab-search">
+                    <div class="tbl-scroll">
+                        <table class="p-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Company</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="ptab-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PAIRS TAB -->
+                <div class="admin-tab" id="tab-pairs">
+                    <h2 class="admin-section-title">Pairs</h2>
+                    <p class="admin-section-sub" id="pairstab-sub">All matched pairs</p>
+                    <input class="search-admin" type="text" placeholder="Search by name..."
+                        oninput="filterPairs(this.value)" id="pairs-search">
+                    <div class="pair-list" id="pairs-body"></div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwsgsESEbpU6jroxbHNIGGlMzmPqpDIBNpo7jtnH_9TY6rheK1CNYN8rEIyef2PjRxabQ/exec';
+        const ADMIN_PIN = '1234';
+        let state = { participants: [], pairs: [], matched: false };
+
+        async function initApp() {
+            if (APPS_SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') {
+                console.warn('Apps Script URL not set. Running in local memory mode.');
+                return;
+            }
+            try {
+                const res = await fetch(APPS_SCRIPT_URL);
+                const data = await res.json();
+                state = data;
+                renderAdmin();
+            } catch (e) {
+                console.error('Failed to load state from Apps Script', e);
+            }
+        }
+        window.addEventListener('DOMContentLoaded', initApp);
+
+        async function serverAction(action, payload) {
+            if (APPS_SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') return true;
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action, payload })
+                });
+                const data = await res.json();
+                return data.success;
+            } catch (e) {
+                console.error(e);
+                return false;
+            }
+        }
+
+        /* ── NAVIGATION ── */
+        function go(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (id === 's-admin') renderAdmin();
+        }
+
+        function adminPrompt() {
+            const pin = prompt('Admin PIN:');
+            if (pin === ADMIN_PIN) go('s-admin');
+            else if (pin !== null) alert('Incorrect PIN');
+        }
+
+        /* ── UTILS ── */
+        function initials(name) {
+            return name.trim().split(/\s+/).map(w => w[0] || '').join('').slice(0, 2).toUpperCase();
+        }
+        function showMsg(id, text, type = 'info') {
+            document.getElementById(id).innerHTML = `<div class="alert alert-${type}">${text}</div>`;
+        }
+        function clearMsg(id) { document.getElementById(id).innerHTML = ''; }
+
+        /* ── REGISTER ── */
+        async function registerParticipant() {
+            const name = document.getElementById('reg-name').value.trim();
+            const company = document.getElementById('reg-company').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
+            clearMsg('reg-msg');
+            if (!name) { showMsg('reg-msg', 'Please enter your full name.', 'warn'); return; }
+            if (name.length < 2) { showMsg('reg-msg', 'Name is too short.', 'warn'); return; }
+            if (!company) { showMsg('reg-msg', 'Please enter your company or organisation.', 'warn'); return; }
+            if (!phone || !/^\+?[\d\s\-]{7,15}$/.test(phone)) { showMsg('reg-msg', 'Please enter a valid phone number.', 'warn'); return; }
+            const dup = state.participants.find(p => p.name.toLowerCase() === name.toLowerCase());
+            if (dup) { showMsg('reg-msg', `"${name}" is already registered!`, 'warn'); return; }
+            if (state.matched) { showMsg('reg-msg', 'Matching has already started. Please contact the admin to be added.', 'warn'); return; }
+            
+            const p = { id: Date.now() + Math.random(), name, company, phone, status: 'waiting', partnerId: null, found: false };
+            
+            document.querySelector('.submit-btn').textContent = 'Registering...';
+            document.querySelector('.submit-btn').disabled = true;
+            
+            const success = await serverAction('register', p);
+            
+            document.querySelector('.submit-btn').textContent = 'Register →';
+            document.querySelector('.submit-btn').disabled = false;
+            
+            if (success) {
+                state.participants.push(p);
+                document.getElementById('reg-name').value = '';
+                document.getElementById('reg-company').value = '';
+                document.getElementById('reg-phone').value = '';
+                showMsg('reg-msg', `✓ You're registered, <strong>${name}</strong>! Wait for the admin to run matching, then come back here.`, 'success');
+            } else {
+                showMsg('reg-msg', 'Failed to register. Please try again.', 'error');
+            }
+        }
+
+        /* ── LOOKUP ── */
+        let lookupDebounce = null;
+        function onLookupType() {
+            clearTimeout(lookupDebounce);
+            lookupDebounce = setTimeout(doSuggestions, 120);
+        }
+
+        function doSuggestions() {
+            const val = document.getElementById('lookup-input').value.trim().toLowerCase();
+            const sl = document.getElementById('suggestion-list');
+            clearMsg('lookup-msg');
+            document.getElementById('profile-result').innerHTML = '';
+            if (val.length < 1) { sl.style.display = 'none'; return; }
+            const matches = state.participants.filter(p => p.name.toLowerCase().includes(val)).slice(0, 8);
+            if (matches.length === 0) { sl.style.display = 'none'; showMsg('lookup-msg', 'No participant found with that name. Check spelling or register first.', 'warn'); return; }
+            sl.style.display = 'block';
+            sl.innerHTML = matches.map(p => `
+    <li class="suggestion-item" onclick="selectParticipant(${p.id})">
+      <div class="avatar av-blue" style="width:30px;height:30px;font-size:11px">${initials(p.name)}</div>
+      <div>
+        <div style="font-weight:500;font-size:14px">${p.name}</div>
+        <div style="font-size:12px;color:var(--text2)">${p.company}</div>
+      </div>
+    </li>`).join('');
+        }
+
+        function selectParticipant(id) {
+            const p = state.participants.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('lookup-input').value = p.name;
+            document.getElementById('suggestion-list').style.display = 'none';
+            renderLookupResult(p);
+        }
+
+        function renderLookupResult(participant) {
+            const res = document.getElementById('profile-result');
+            if (participant.status === 'waiting') {
+                res.innerHTML = `<div class="waiting-card">
+      <div style="font-size:32px;margin-bottom:8px">⏳</div>
+      <div style="font-weight:500;font-size:16px;margin-bottom:4px">${participant.name}</div>
+      <div style="font-size:13px;color:var(--text2)">${participant.company}</div>
+      <div style="font-size:14px;color:var(--text2);margin-top:12px">Matching hasn't started yet. Check back soon!</div>
+    </div>`;
+                return;
+            }
+            const pair = state.pairs.find(p => p.id === participant.partnerId);
+            if (!pair) { res.innerHTML = `<div class="alert alert-error">Could not find your pair. Please contact the admin.</div>`; return; }
+            const partners = pair.members.map(id => state.participants.find(p => p.id === id)).filter(p => p && p.id !== participant.id);
+            const allFound = pair.members.map(id => state.participants.find(p => p.id === id)).filter(Boolean).every(p => p.found);
+
+            res.innerHTML = `<div class="match-reveal">
+    <div class="p-card">
+      <div class="avatar av-accent">${initials(participant.name)}</div>
+      <div>
+        <div class="p-name">${participant.name}</div>
+        <div class="p-meta">${participant.company} · ${participant.phone}</div>
+      </div>
+    </div>
+    <div class="match-connector">your match</div>
+    ${partners.map(partner => `
+    <div class="p-card">
+      <div class="avatar av-blue">${initials(partner.name)}</div>
+      <div>
+        <div class="p-name">${partner.name}</div>
+        <div class="p-meta">${partner.company} · ${partner.phone}</div>
+      </div>
+    </div>`).join('')}
+    ${allFound
+                    ? `<div class="confirmed-banner">
+          <div style="font-size:28px">🎉</div>
+          <div class="confirmed-big">You found each other!</div>
+          <div style="font-size:13px;color:var(--text2)">Both sides confirmed. Enjoy your conversation.</div>
+        </div>`
+                    : participant.found
+                        ? `<button class="found-btn" disabled>✓ You confirmed — waiting for partner</button>`
+                        : `<button class="found-btn" onclick="markFound(${participant.id},'${pair.id}')">✓ We found each other!</button>`
+                }
+  </div>`;
+        }
+
+        async function markFound(participantId, pairId) {
+            const participant = state.participants.find(p => p.id === participantId);
+            if (!participant) return;
+            
+            // Optimistic update
+            participant.found = true;
+            renderLookupResult(participant);
+            
+            await serverAction('markFound', { participantId, pairId });
+        }
+
+        /* ── ADMIN – MATCHING ── */
+        async function runMatching() {
+            const unmatched = state.participants.filter(p => p.status === 'waiting');
+            if (unmatched.length < 2) { showMsg('overview-msg', 'Need at least 2 unmatched participants.', 'warn'); return; }
+            // Shuffle
+            for (let i = unmatched.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [unmatched[i], unmatched[j]] = [unmatched[j], unmatched[i]];
+            }
+            let i = 0;
+            while (i < unmatched.length) {
+                const remaining = unmatched.length - i;
+                if (remaining === 1) { i++; break; } // leftover — leave unmatched
+                const a = unmatched[i], b = unmatched[i + 1];
+                const pid = 'p' + Date.now() + i;
+                state.pairs.push({ id: pid, members: [a.id, b.id], allFound: false });
+                a.status = 'matched'; a.partnerId = pid;
+                b.status = 'matched'; b.partnerId = pid;
+                i += 2;
+            }
+            const leftover = unmatched.length % 2;
+            state.matched = true;
+            
+            showMsg('overview-msg', 'Syncing matching data to server...', 'info');
+            await serverAction('runMatching', { participants: state.participants, pairs: state.pairs });
+            
+            if (leftover) {
+                showMsg('overview-msg', `Matching done! ${state.pairs.length} pairs created. <strong>1 participant left unmatched</strong> (odd number — ask them to pair with any existing pair).`, 'warn');
+            } else {
+                showMsg('overview-msg', `✓ ${state.pairs.length} pairs created successfully! Notify participants.`, 'success');
+            }
+            document.getElementById('reset-btn').style.display = 'inline-flex';
+            renderAdmin();
+        }
+
+        async function resetMatching() {
+            if (!confirm('Reset ALL matching? This cannot be undone.')) return;
+            
+            showMsg('overview-msg', 'Resetting on server...', 'info');
+            await serverAction('resetMatching', {});
+            
+            state.pairs = [];
+            state.matched = false;
+            state.participants.forEach(p => { p.status = 'waiting'; p.partnerId = null; p.found = false; });
+            document.getElementById('reset-btn').style.display = 'none';
+            clearMsg('overview-msg');
+            renderAdmin();
+        }
+
+        async function addDemoData() {
+            const demos = [
+                { name: 'Arjun Sharma', company: 'Infosys', phone: '9876543210' },
+                { name: 'Priya Reddy', company: 'TCS', phone: '9845123456' },
+                { name: 'Rohit Verma', company: 'Wipro', phone: '9812345678' },
+                { name: 'Sneha Iyer', company: 'Deloitte', phone: '9900112233' },
+                { name: 'Karan Mehta', company: 'Accenture', phone: '9988776655' },
+                { name: 'Divya Nair', company: 'Google', phone: '9871234560' },
+                { name: 'Aditya Patel', company: 'Microsoft', phone: '9765432100' },
+                { name: 'Meera Joshi', company: 'Flipkart', phone: '9845678901' },
+                { name: 'Suresh Kumar', company: 'Amazon', phone: '9811122334' },
+                { name: 'Lakshmi Rao', company: 'HCL Tech', phone: '9933445566' },
+            ];
+            let added = [];
+            demos.forEach(d => {
+                if (!state.participants.find(p => p.name === d.name)) {
+                    const p = { id: Date.now() + Math.random(), ...d, status: 'waiting', partnerId: null, found: false };
+                    state.participants.push(p);
+                    added.push(p);
+                }
+            });
+            
+            if (added.length > 0) {
+                showMsg('overview-msg', 'Syncing demo data to server...', 'info');
+                await serverAction('addDemoData', added);
+            }
+            
+            renderAdmin();
+            showMsg('overview-msg', `Added ${added.length} demo participants.`, 'info');
+        }
+
+        async function removeParticipant(id) {
+            if (state.matched) { alert('Cannot remove after matching. Reset matching first.'); return; }
+            state.participants = state.participants.filter(p => p.id !== id);
+            await serverAction('removeParticipant', { id });
+            renderAdmin();
+        }
+
+        /* ── ADMIN – RENDER ── */
+        function renderAdmin() {
+            const ps = state.participants;
+            const matchedCount = ps.filter(p => p.status === 'matched').length;
+            const foundCount = ps.filter(p => p.found).length;
+            const pairsFound = state.pairs.filter(pair => pair.members.map(id => ps.find(p => p.id === id)).filter(Boolean).every(p => p.found)).length;
+
+            document.getElementById('st-total').textContent = ps.length;
+            document.getElementById('st-unmatched').textContent = ps.filter(p => p.status === 'waiting').length;
+            document.getElementById('st-matched').textContent = matchedCount;
+            document.getElementById('st-found').textContent = foundCount;
+            document.getElementById('progress-label').textContent = `${pairsFound} / ${state.pairs.length}`;
+            document.getElementById('progress-bar').style.width = state.pairs.length ? Math.round(pairsFound / state.pairs.length * 100) + '%' : '0%';
+
+            const waiting = ps.filter(p => p.status === 'waiting');
+            const oddEl = document.getElementById('odd-warn-overview');
+            if (!state.matched && waiting.length > 0 && waiting.length % 2 !== 0) {
+                oddEl.innerHTML = `<div class="odd-warn" style="margin-bottom:12px">⚠ Odd number of unmatched participants (${waiting.length}). 1 person will be left unmatched. Adjust the list or proceed.</div>`;
+            } else { oddEl.innerHTML = ''; }
+
+            renderParticipantTable(ps);
+            renderPairsTable(state.pairs);
+            document.getElementById('ptab-sub').textContent = `${ps.length} registered`;
+            document.getElementById('pairstab-sub').textContent = `${state.pairs.length} pairs`;
+        }
+
+        function renderParticipantTable(ps) {
+            const body = document.getElementById('ptab-body');
+            if (ps.length === 0) { body.innerHTML = `<tr><td colspan="6"><div class="empty-state">No participants yet</div></td></tr>`; return; }
+            body.innerHTML = ps.map((p, i) => `
+    <tr>
+      <td style="color:var(--text3)">${i + 1}</td>
+      <td><div style="display:flex;align-items:center;gap:8px">
+        <div class="avatar av-accent" style="width:30px;height:30px;font-size:11px">${initials(p.name)}</div>
+        <span style="font-weight:500">${p.name}</span>
+      </div></td>
+      <td style="color:var(--text2)">${p.company}</td>
+      <td style="color:var(--text2)">${p.phone}</td>
+      <td><span class="badge ${p.found ? 'b-found' : p.status === 'matched' ? 'b-matched' : 'b-wait'}">${p.found ? 'Found' : p.status === 'matched' ? 'Matched' : 'Waiting'}</span></td>
+      <td>${!state.matched ? `<button class="abtn danger" style="padding:5px 10px;font-size:12px" onclick="removeParticipant(${p.id})">Remove</button>` : ''}</td>
+    </tr>`).join('');
+        }
+
+        function renderPairsTable(pairs) {
+            const body = document.getElementById('pairs-body');
+            if (pairs.length === 0) { body.innerHTML = `<div class="empty-state">No pairs yet. Run matching first.</div>`; return; }
+            body.innerHTML = pairs.map((pair, i) => {
+                const members = pair.members.map(id => state.participants.find(p => p.id === id)).filter(Boolean);
+                const allFound = members.every(p => p.found);
+                return `<div class="pair-row">
+      <div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:4px">Pair ${i + 1}</div>
+        <div class="pair-members">
+          ${members.map((m, idx) => `
+            <span>
+              <span style="font-weight:500">${m.name}</span>
+              <span style="display:block;font-size:11px;color:var(--text2)">${m.company}</span>
+            </span>
+            ${idx < members.length - 1 ? '<span class="pair-sep">↔</span>' : ''}`).join('')}
+        </div>
+      </div>
+      <span class="badge ${allFound ? 'b-found' : 'b-matched'}">${allFound ? '✓ Found' : 'Active'}</span>
+    </div>`;
+            }).join('');
+        }
+
+        function filterParticipants(q) {
+            const lq = q.toLowerCase();
+            const filtered = q ? state.participants.filter(p => p.name.toLowerCase().includes(lq) || p.company.toLowerCase().includes(lq)) : state.participants;
+            renderParticipantTable(filtered);
+        }
+
+        function filterPairs(q) {
+            const lq = q.toLowerCase();
+            const filtered = q ? state.pairs.filter(pair => pair.members.some(id => { const p = state.participants.find(x => x.id === id); return p && p.name.toLowerCase().includes(lq); })) : state.pairs;
+            renderPairsTable(filtered);
+        }
+
+        function adminTab(btn, tabId) {
+            document.querySelectorAll('.sn-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+
+</html>
