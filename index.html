@@ -1264,7 +1264,6 @@
             } else {
                 showMsg('overview-msg', `✓ ${state.pairs.length} pairs created successfully! Notify participants.`, 'success');
             }
-            document.getElementById('reset-btn').style.display = 'inline-flex';
             renderAdmin();
         }
 
@@ -1277,7 +1276,6 @@
             state.pairs = [];
             state.matched = false;
             state.participants.forEach(p => { p.status = 'waiting'; p.networkId = null; p.found = false; });
-            document.getElementById('reset-btn').style.display = 'none';
             clearMsg('overview-msg');
             renderAdmin();
         }
@@ -1339,6 +1337,8 @@
             if (!state.matched && waiting.length > 0 && waiting.length % 2 !== 0) {
                 oddEl.innerHTML = `<div class="odd-warn" style="margin-bottom:12px">⚠ Odd number of unmatched participants (${waiting.length}). 1 person will be left unmatched. Adjust the list or proceed.</div>`;
             } else { oddEl.innerHTML = ''; }
+
+            document.getElementById('reset-btn').style.display = state.matched ? 'inline-flex' : 'none';
 
             renderParticipantTable(ps);
             renderPairsTable(state.pairs);
