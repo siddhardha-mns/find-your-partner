@@ -973,6 +973,8 @@
                         <button class="abtn" onclick="addDemoData()">+ Add 10 demo participants</button>
                         <button class="abtn danger" id="reset-btn" onclick="resetMatching()" style="display:none">↺
                             Reset matching</button>
+                        <button class="abtn danger" onclick="clearAllParticipants()" style="border: 1px solid var(--red); background: transparent; color: var(--red); display: inline-flex;">🗑
+                            Delete all participants</button>
                     </div>
                 </div>
 
@@ -1278,6 +1280,24 @@
             state.participants.forEach(p => { p.status = 'waiting'; p.networkId = null; p.found = false; });
             clearMsg('overview-msg');
             renderAdmin();
+        }
+
+        async function clearAllParticipants() {
+            if (!confirm('WARNING: This will permanently delete ALL participants and matching pairs, reset the Google Sheet, and open a brand-new round of registrations. This action cannot be undone.\n\nAre you sure you want to proceed?')) return;
+            
+            showMsg('overview-msg', 'Clearing database and resetting registrations...', 'info');
+            
+            const success = await serverAction('clearAll', {});
+            if (success) {
+                state.participants = [];
+                state.pairs = [];
+                state.matched = false;
+                clearMsg('overview-msg');
+                showMsg('overview-msg', '✓ Successfully deleted all participants and opened a new round of registrations!', 'success');
+                renderAdmin();
+            } else {
+                showMsg('overview-msg', 'Failed to delete participants. Please check your connection or Apps Script.', 'error');
+            }
         }
 
         async function addDemoData() {
