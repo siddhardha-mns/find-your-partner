@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Your Partner | SummerSaaS Edition</title>
+    <title>Find Your network | SummerSaaS Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
@@ -872,11 +872,11 @@
         <div class="hero-grid"></div>
         <div class="hero-inner">
             <p class="hero-eyebrow">SummerSaaS Edition</p>
-            <h1 class="hero-title">Find Your<br><em>Partner</em></h1>
-            <p class="hero-sub">Register, get matched, and find your networking partner somewhere in the venue.</p>
+            <h1 class="hero-title">Find Your<br><em>network</em></h1>
+            <p class="hero-sub">Register, get matched, and find your networking network somewhere in the venue.</p>
             <div class="hero-btns">
                 <button class="btn-hero-primary" onclick="go('s-register')">Register now</button>
-                <button class="btn-hero-secondary" onclick="go('s-lookup')">Find my partner</button>
+                <button class="btn-hero-secondary" onclick="go('s-lookup')">Find my network</button>
                 <button class="btn-hero-ghost" onclick="adminPrompt()">Admin panel ›</button>
             </div>
         </div>
@@ -906,7 +906,7 @@
         <div class="panel">
             <div class="panel-header">
                 <button class="back-btn" onclick="go('s-landing')">← Back</button>
-                <h1 class="panel-title">Find my partner</h1>
+                <h1 class="panel-title">Find my network</h1>
                 <p class="panel-sub">Search your name to see who you've been matched with.</p>
             </div>
             <div id="lookup-msg"></div>
@@ -1084,7 +1084,7 @@
             if (dup) { showMsg('reg-msg', `"${name}" is already registered!`, 'warn'); return; }
             if (state.matched) { showMsg('reg-msg', 'Matching has already started. Please contact the admin to be added.', 'warn'); return; }
             
-            const p = { id: Date.now() + Math.random(), name, company, phone, status: 'waiting', partnerId: null, found: false };
+            const p = { id: Date.now() + Math.random(), name, company, phone, status: 'waiting', networkId: null, found: false };
             
             document.querySelector('.submit-btn').textContent = 'Registering...';
             document.querySelector('.submit-btn').disabled = true;
@@ -1150,9 +1150,9 @@
     </div>`;
                 return;
             }
-            const pair = state.pairs.find(p => p.id === participant.partnerId);
+            const pair = state.pairs.find(p => p.id === participant.networkId);
             if (!pair) { res.innerHTML = `<div class="alert alert-error">Could not find your pair. Please contact the admin.</div>`; return; }
-            const partners = pair.members.map(id => state.participants.find(p => p.id === id)).filter(p => p && p.id !== participant.id);
+            const networks = pair.members.map(id => state.participants.find(p => p.id === id)).filter(p => p && p.id !== participant.id);
             const allFound = pair.members.map(id => state.participants.find(p => p.id === id)).filter(Boolean).every(p => p.found);
 
             res.innerHTML = `<div class="match-reveal">
@@ -1164,18 +1164,18 @@
       </div>
     </div>
     <div class="match-connector">your match</div>
-    ${partners.map(partner => `
+    ${networks.map(network => `
     <div class="p-card" style="flex-direction: column; align-items: stretch; gap: 12px;">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <div class="avatar av-blue">${initials(partner.name)}</div>
+        <div class="avatar av-blue">${initials(network.name)}</div>
         <div>
-          <div class="p-name" style="font-size: 18px;">${partner.name}</div>
-          <div class="p-meta" style="font-size: 14px;">🏢 ${partner.company}</div>
+          <div class="p-name" style="font-size: 18px;">${network.name}</div>
+          <div class="p-meta" style="font-size: 14px;">🏢 ${network.company}</div>
         </div>
       </div>
       <div style="background: rgba(96,165,250,0.08); border: 1px solid rgba(96,165,250,0.2); border-radius: var(--radius-sm); padding: 12px; display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-size: 13px; color: var(--text2);">Contact Partner</span>
-        <a href="tel:${partner.phone}" style="color: var(--blue); font-weight: 600; text-decoration: none; font-size: 16px; background: rgba(96,165,250,0.15); padding: 6px 12px; border-radius: 20px;">📞 ${partner.phone}</a>
+        <span style="font-size: 13px; color: var(--text2);">Contact network</span>
+        <a href="tel:${network.phone}" style="color: var(--blue); font-weight: 600; text-decoration: none; font-size: 16px; background: rgba(96,165,250,0.15); padding: 6px 12px; border-radius: 20px;">📞 ${network.phone}</a>
       </div>
     </div>`).join('')}
     ${allFound
@@ -1185,7 +1185,7 @@
           <div style="font-size:13px;color:var(--text2)">Both sides confirmed. Enjoy your conversation.</div>
         </div>`
                     : participant.found
-                        ? `<button class="found-btn" disabled>✓ You confirmed — waiting for partner</button>`
+                        ? `<button class="found-btn" disabled>✓ You confirmed — waiting for network</button>`
                         : `<button class="found-btn" onclick="markFound(${participant.id},'${pair.id}')">✓ We found each other!</button>`
                 }
   </div>`;
@@ -1218,8 +1218,8 @@
                 const a = unmatched[i], b = unmatched[i + 1];
                 const pid = 'p' + Date.now() + i;
                 state.pairs.push({ id: pid, members: [a.id, b.id], allFound: false });
-                a.status = 'matched'; a.partnerId = pid;
-                b.status = 'matched'; b.partnerId = pid;
+                a.status = 'matched'; a.networkId = pid;
+                b.status = 'matched'; b.networkId = pid;
                 i += 2;
             }
             const leftover = unmatched.length % 2;
@@ -1245,7 +1245,7 @@
             
             state.pairs = [];
             state.matched = false;
-            state.participants.forEach(p => { p.status = 'waiting'; p.partnerId = null; p.found = false; });
+            state.participants.forEach(p => { p.status = 'waiting'; p.networkId = null; p.found = false; });
             document.getElementById('reset-btn').style.display = 'none';
             clearMsg('overview-msg');
             renderAdmin();
@@ -1267,7 +1267,7 @@
             let added = [];
             demos.forEach(d => {
                 if (!state.participants.find(p => p.name === d.name)) {
-                    const p = { id: Date.now() + Math.random(), ...d, status: 'waiting', partnerId: null, found: false };
+                    const p = { id: Date.now() + Math.random(), ...d, status: 'waiting', networkId: null, found: false };
                     state.participants.push(p);
                     added.push(p);
                 }
