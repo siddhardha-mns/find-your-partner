@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find Your network | SummerSaaS Edition</title>
+    <title>Find Your Network | SummerSaaS Edition</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap"
@@ -872,11 +872,11 @@
         <div class="hero-grid"></div>
         <div class="hero-inner">
             <p class="hero-eyebrow">SummerSaaS Edition</p>
-            <h1 class="hero-title">Find Your<br><em>network</em></h1>
-            <p class="hero-sub">Register, get matched, and find your networking network somewhere in the venue.</p>
+            <h1 class="hero-title">Find Your<br><em>Network</em></h1>
+            <p class="hero-sub">Register, get matched, and find your networking match somewhere in the venue.</p>
             <div class="hero-btns">
                 <button class="btn-hero-primary" onclick="go('s-register')">Register now</button>
-                <button class="btn-hero-secondary" onclick="go('s-lookup')">Find my network</button>
+                <button class="btn-hero-secondary" onclick="go('s-lookup')">Find my Network</button>
                 <button class="btn-hero-ghost" onclick="adminPrompt()">Admin panel ›</button>
             </div>
         </div>
@@ -906,7 +906,7 @@
         <div class="panel">
             <div class="panel-header">
                 <button class="back-btn" onclick="go('s-landing')">← Back</button>
-                <h1 class="panel-title">Find my network</h1>
+                <h1 class="panel-title">Find my Network</h1>
                 <p class="panel-sub">Search your name to see who you've been matched with.</p>
             </div>
             <div id="lookup-msg"></div>
@@ -1025,6 +1025,12 @@
             try {
                 const res = await fetch(APPS_SCRIPT_URL);
                 const data = await res.json();
+                // Map server's partnerId to client's networkId
+                if (data && data.participants) {
+                    data.participants.forEach(p => {
+                        p.networkId = p.partnerId || null;
+                    });
+                }
                 state = data;
                 renderAdmin();
             } catch (e) {
@@ -1036,9 +1042,27 @@
         async function serverAction(action, payload) {
             if (APPS_SCRIPT_URL === 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') return true;
             try {
+                // Map client's networkId to server's partnerId before posting
+                let cleanPayload = JSON.parse(JSON.stringify(payload));
+                if (action === 'register') {
+                    cleanPayload.partnerId = cleanPayload.networkId;
+                } else if (action === 'runMatching') {
+                    if (cleanPayload.participants) {
+                        cleanPayload.participants.forEach(p => {
+                            p.partnerId = p.networkId;
+                        });
+                    }
+                } else if (action === 'addDemoData') {
+                    if (Array.isArray(cleanPayload)) {
+                        cleanPayload.forEach(p => {
+                            p.partnerId = p.networkId;
+                        });
+                    }
+                }
+
                 const res = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action, payload })
+                    body: JSON.stringify({ action, payload: cleanPayload })
                 });
                 const data = await res.json();
                 return data.success;
@@ -1181,7 +1205,7 @@
         </div>
       </div>
       <div style="background: rgba(96,165,250,0.08); border: 1px solid rgba(96,165,250,0.2); border-radius: var(--radius-sm); padding: 12px; display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-size: 13px; color: var(--text2);">Contact network</span>
+        <span style="font-size: 13px; color: var(--text2);">Contact Match</span>
         <a href="tel:${network.phone}" style="color: var(--blue); font-weight: 600; text-decoration: none; font-size: 16px; background: rgba(96,165,250,0.15); padding: 6px 12px; border-radius: 20px;">📞 ${network.phone}</a>
       </div>
     </div>`).join('')}
@@ -1192,7 +1216,7 @@
           <div style="font-size:13px;color:var(--text2)">Both sides confirmed. Enjoy your conversation.</div>
         </div>`
                     : participant.found
-                        ? `<button class="found-btn" disabled>✓ You confirmed — waiting for network</button>`
+                        ? `<button class="found-btn" disabled>✓ You confirmed — waiting for match</button>`
                         : `<button class="found-btn" onclick="markFound(${participant.id},'${pair.id}')">✓ We found each other!</button>`
                 }
   </div>`;
