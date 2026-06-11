@@ -893,6 +893,8 @@
             <div id="reg-msg"></div>
             <div class="field"><label>Full name *</label><input type="text" id="reg-name"
                     placeholder="e.g. Arjun Sharma" maxlength="80"></div>
+            <div class="field"><label>College / Company *</label><input type="text" id="reg-company"
+                    placeholder="e.g. VIT / Infosys" maxlength="80"></div>
             <button class="submit-btn" onclick="registerParticipant()">Register →</button>
         </div>
     </div>
@@ -978,7 +980,7 @@
                 <div class="admin-tab" id="tab-participants">
                     <h2 class="admin-section-title">Participants</h2>
                     <p class="admin-section-sub" id="ptab-sub">All registered members</p>
-                    <input class="search-admin" type="text" placeholder="Search by name..."
+                    <input class="search-admin" type="text" placeholder="Search by name or company..."
                         oninput="filterParticipants(this.value)" id="ptab-search">
                     <div class="tbl-scroll">
                         <table class="p-table">
@@ -986,6 +988,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
+                                    <th>College/Company</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -1093,14 +1096,16 @@
         /* ── REGISTER ── */
         async function registerParticipant() {
             const name = document.getElementById('reg-name').value.trim();
+            const company = document.getElementById('reg-company').value.trim();
             clearMsg('reg-msg');
             if (!name) { showMsg('reg-msg', 'Please enter your full name.', 'warn'); return; }
             if (name.length < 2) { showMsg('reg-msg', 'Name is too short.', 'warn'); return; }
+            if (!company) { showMsg('reg-msg', 'Please enter your college or company.', 'warn'); return; }
             const dup = state.participants.find(p => p.name.toLowerCase() === name.toLowerCase());
             if (dup) { showMsg('reg-msg', `"${name}" is already registered!`, 'warn'); return; }
             if (state.matched) { showMsg('reg-msg', 'Matching has already started. Please contact the admin to be added.', 'warn'); return; }
             
-            const p = { id: Date.now() + Math.random(), name, status: 'waiting', networkId: null, found: false };
+            const p = { id: Date.now() + Math.random(), name, company, status: 'waiting', networkId: null, found: false };
             
             document.querySelector('.submit-btn').textContent = 'Registering...';
             document.querySelector('.submit-btn').disabled = true;
@@ -1113,6 +1118,7 @@
             if (success) {
                 state.participants.push(p);
                 document.getElementById('reg-name').value = '';
+                document.getElementById('reg-company').value = '';
                 showMsg('reg-msg', `✓ You're registered, <strong>${name}</strong>! Wait for the admin to run matching, then come back here.`, 'success');
             } else {
                 showMsg('reg-msg', 'Failed to register. Please try again.', 'error');
@@ -1140,6 +1146,7 @@
       <div class="avatar av-blue" style="width:30px;height:30px;font-size:11px">${initials(p.name)}</div>
       <div>
         <div style="font-weight:500;font-size:14px">${p.name}</div>
+        <div style="font-size:12px;color:var(--text2)">${p.company}</div>
       </div>
     </li>`).join('');
         }
@@ -1165,6 +1172,7 @@
                 res.innerHTML = `<div class="waiting-card">
       <div style="font-size:32px;margin-bottom:8px">⏳</div>
       <div style="font-weight:500;font-size:16px;margin-bottom:4px">${participant.name}</div>
+      <div style="font-size:13px;color:var(--text2)">${participant.company}</div>
       <div style="font-size:14px;color:var(--text2);margin-top:12px">Matching hasn't started yet. Check back soon!</div>
     </div>`;
                 return;
@@ -1179,6 +1187,7 @@
       <div class="avatar av-accent">${initials(participant.name)}</div>
       <div>
         <div class="p-name">${participant.name}</div>
+        <div class="p-meta">🏢 ${participant.company}</div>
       </div>
     </div>
     <div class="match-connector">your match</div>
@@ -1188,6 +1197,7 @@
         <div class="avatar av-blue">${initials(network.name)}</div>
         <div>
           <div class="p-name" style="font-size: 18px;">${network.name}</div>
+          <div class="p-meta" style="font-size: 14px;">🏢 ${network.company}</div>
         </div>
       </div>
     </div>`).join('')}
@@ -1282,16 +1292,16 @@
 
         async function addDemoData() {
             const demos = [
-                { name: 'Arjun Sharma' },
-                { name: 'Priya Reddy' },
-                { name: 'Rohit Verma' },
-                { name: 'Sneha Iyer' },
-                { name: 'Karan Mehta' },
-                { name: 'Divya Nair' },
-                { name: 'Aditya Patel' },
-                { name: 'Meera Joshi' },
-                { name: 'Suresh Kumar' },
-                { name: 'Lakshmi Rao' },
+                { name: 'Arjun Sharma', company: 'Infosys' },
+                { name: 'Priya Reddy', company: 'VIT' },
+                { name: 'Rohit Verma', company: 'Wipro' },
+                { name: 'Sneha Iyer', company: 'Deloitte' },
+                { name: 'Karan Mehta', company: 'Accenture' },
+                { name: 'Divya Nair', company: 'Google' },
+                { name: 'Aditya Patel', company: 'Microsoft' },
+                { name: 'Meera Joshi', company: 'Flipkart' },
+                { name: 'Suresh Kumar', company: 'Amazon' },
+                { name: 'Lakshmi Rao', company: 'HCL Tech' },
             ];
             let added = [];
             demos.forEach(d => {
@@ -1356,6 +1366,7 @@
         <div class="avatar av-accent" style="width:30px;height:30px;font-size:11px">${initials(p.name)}</div>
         <span style="font-weight:500">${p.name}</span>
       </div></td>
+      <td style="color:var(--text2)">${p.company}</td>
       <td><span class="badge ${p.found ? 'b-found' : p.status === 'matched' ? 'b-matched' : 'b-wait'}">${p.found ? 'Found' : p.status === 'matched' ? 'Matched' : 'Waiting'}</span></td>
       <td>${!state.matched ? `<button class="abtn danger" style="padding:5px 10px;font-size:12px" onclick="removeParticipant(${p.id})">Remove</button>` : ''}</td>
     </tr>`).join('');
@@ -1374,6 +1385,7 @@
           ${members.map((m, idx) => `
             <span>
               <span style="font-weight:500">${m.name}</span>
+              <span style="display:block;font-size:11px;color:var(--text2)">${m.company}</span>
             </span>
             ${idx < members.length - 1 ? '<span class="pair-sep">↔</span>' : ''}`).join('')}
         </div>
@@ -1385,7 +1397,7 @@
 
         function filterParticipants(q) {
             const lq = q.toLowerCase();
-            const filtered = q ? state.participants.filter(p => p.name.toLowerCase().includes(lq)) : state.participants;
+            const filtered = q ? state.participants.filter(p => p.name.toLowerCase().includes(lq) || p.company.toLowerCase().includes(lq)) : state.participants;
             renderParticipantTable(filtered);
         }
 
